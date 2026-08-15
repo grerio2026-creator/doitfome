@@ -10,13 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as WorkersIndexRouteImport } from './routes/workers.index'
+import { Route as WorkersWorkerIdRouteImport } from './routes/workers.$workerId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostJobRoute = PostJobRouteImport.update({
+  id: '/post-job',
+  path: '/post-job',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
@@ -34,37 +47,76 @@ const WorkersIndexRoute = WorkersIndexRouteImport.update({
   path: '/workers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkersWorkerIdRoute = WorkersWorkerIdRouteImport.update({
+  id: '/workers/$workerId',
+  path: '/workers/$workerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/inbox': typeof InboxRoute
+  '/post-job': typeof PostJobRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/jobs/': typeof JobsIndexRoute
   '/workers/': typeof WorkersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/inbox': typeof InboxRoute
+  '/post-job': typeof PostJobRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/jobs': typeof JobsIndexRoute
   '/workers': typeof WorkersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/inbox': typeof InboxRoute
+  '/post-job': typeof PostJobRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/jobs/': typeof JobsIndexRoute
   '/workers/': typeof WorkersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/jobs/$jobId' | '/jobs/' | '/workers/'
+  fullPaths:
+    | '/'
+    | '/inbox'
+    | '/post-job'
+    | '/jobs/$jobId'
+    | '/workers/$workerId'
+    | '/jobs/'
+    | '/workers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/jobs/$jobId' | '/jobs' | '/workers'
-  id: '__root__' | '/' | '/jobs/$jobId' | '/jobs/' | '/workers/'
+  to:
+    | '/'
+    | '/inbox'
+    | '/post-job'
+    | '/jobs/$jobId'
+    | '/workers/$workerId'
+    | '/jobs'
+    | '/workers'
+  id:
+    | '__root__'
+    | '/'
+    | '/inbox'
+    | '/post-job'
+    | '/jobs/$jobId'
+    | '/workers/$workerId'
+    | '/jobs/'
+    | '/workers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  InboxRoute: typeof InboxRoute
+  PostJobRoute: typeof PostJobRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
+  WorkersWorkerIdRoute: typeof WorkersWorkerIdRoute
   JobsIndexRoute: typeof JobsIndexRoute
   WorkersIndexRoute: typeof WorkersIndexRoute
 }
@@ -76,6 +128,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post-job': {
+      id: '/post-job'
+      path: '/post-job'
+      fullPath: '/post-job'
+      preLoaderRoute: typeof PostJobRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jobs/': {
@@ -99,12 +165,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/workers/$workerId': {
+      id: '/workers/$workerId'
+      path: '/workers/$workerId'
+      fullPath: '/workers/$workerId'
+      preLoaderRoute: typeof WorkersWorkerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  InboxRoute: InboxRoute,
+  PostJobRoute: PostJobRoute,
   JobsJobIdRoute: JobsJobIdRoute,
+  WorkersWorkerIdRoute: WorkersWorkerIdRoute,
   JobsIndexRoute: JobsIndexRoute,
   WorkersIndexRoute: WorkersIndexRoute,
 }
