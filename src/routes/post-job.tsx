@@ -45,7 +45,7 @@ export const Route = createFileRoute("/post-job")({
 
 type LocationMode = "onsite" | "remote";
 type TimingMode = "urgent" | "scheduled" | "flexible";
-type PaymentType = "fixed" | "hourly" | "daily";
+type PaymentType = "selesai_kerja" | "harian" | "borongan" | "mingguan";
 
 function PostJobPage() {
   const { user, profile, openLogin } = useAuth();
@@ -64,7 +64,7 @@ function PostJobPage() {
     exactAddress: "",
     contactPhone: "",
     timingMode: "urgent" as TimingMode,
-    paymentType: "fixed" as PaymentType,
+    paymentType: "borongan" as PaymentType,
     paymentAmount: 150000,
     headcount: 1,
   });
@@ -101,7 +101,7 @@ function PostJobPage() {
         payment_type: form.paymentType,
         payment_amount: form.paymentAmount,
         headcount: form.headcount,
-        status: "open",
+        status: "OPEN",
       })
       .select("id")
       .maybeSingle();
@@ -262,9 +262,10 @@ function PostJobPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fixed">Borongan</SelectItem>
-                  <SelectItem value="hourly">Per Jam</SelectItem>
-                  <SelectItem value="daily">Harian</SelectItem>
+                  <SelectItem value="borongan">Borongan</SelectItem>
+                  <SelectItem value="selesai_kerja">Selesai Kerja</SelectItem>
+                  <SelectItem value="harian">Harian</SelectItem>
+                  <SelectItem value="mingguan">Mingguan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
