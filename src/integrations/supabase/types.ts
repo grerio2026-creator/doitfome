@@ -608,6 +608,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_platform_stats: {
+        Args: never
+        Returns: {
+          commission: number
+          completed_jobs: number
+          gmv: number
+          open_jobs: number
+          total_jobs: number
+          total_users: number
+          total_workers: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
