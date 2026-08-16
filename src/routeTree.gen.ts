@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as WorkersIndexRouteImport } from './routes/workers.index'
@@ -50,6 +51,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminModerationRoute = AdminModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => AdminRoute,
+} as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin': typeof AdminIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inbox'
     | '/post-job'
+    | '/admin/moderation'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin/'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/inbox'
     | '/post-job'
+    | '/admin/moderation'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inbox'
     | '/post-job'
+    | '/admin/moderation'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin/'
@@ -201,6 +213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/moderation': {
+      id: '/admin/moderation'
+      path: '/moderation'
+      fullPath: '/admin/moderation'
+      preLoaderRoute: typeof AdminModerationRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/jobs/': {
       id: '/jobs/'
       path: '/jobs'
@@ -233,10 +252,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminModerationRoute: typeof AdminModerationRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminModerationRoute: AdminModerationRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
