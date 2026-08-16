@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAffiliatesRouteImport } from './routes/admin.affiliates'
 import { Route as AdminFinanceRouteImport } from './routes/admin.finance'
 import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
@@ -50,6 +51,11 @@ const PostJobRoute = PostJobRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAffiliatesRoute = AdminAffiliatesRouteImport.update({
+  id: '/affiliates',
+  path: '/affiliates',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminFinanceRoute = AdminFinanceRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
   '/post-job': typeof PostJobRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inbox'
     | '/post-job'
+    | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
     | '/jobs/$jobId'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/inbox'
     | '/post-job'
+    | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
     | '/jobs/$jobId'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inbox'
     | '/post-job'
+    | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
     | '/jobs/$jobId'
@@ -225,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/affiliates': {
+      id: '/admin/affiliates'
+      path: '/affiliates'
+      fullPath: '/admin/affiliates'
+      preLoaderRoute: typeof AdminAffiliatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/finance': {
       id: '/admin/finance'
       path: '/finance'
@@ -271,12 +290,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAffiliatesRoute: typeof AdminAffiliatesRoute
   AdminFinanceRoute: typeof AdminFinanceRoute
   AdminModerationRoute: typeof AdminModerationRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAffiliatesRoute: AdminAffiliatesRoute,
   AdminFinanceRoute: AdminFinanceRoute,
   AdminModerationRoute: AdminModerationRoute,
   AdminIndexRoute: AdminIndexRoute,
