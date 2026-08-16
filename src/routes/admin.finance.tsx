@@ -89,7 +89,7 @@ function FinancePage() {
   const gmv = escrow.reduce((sum, e) => sum + Number(e.amount), 0);
   const commission = escrow.reduce((sum, e) => sum + Number(e.commission), 0);
   const held = escrow
-    .filter((e) => e.status === "HELD" || e.status === "LOCKED")
+    .filter((e) => e.status === "HELD" || e.status === "DISPUTED")
     .reduce((sum, e) => sum + Number(e.amount), 0);
 
   async function decide(id: string, status: "paid" | "rejected") {
