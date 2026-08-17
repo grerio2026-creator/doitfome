@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAffiliatesRouteImport } from './routes/admin.affiliates'
 import { Route as AdminFinanceRouteImport } from './routes/admin.finance'
 import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
+import { Route as EnterpriseOwnerIdRouteImport } from './routes/enterprise.$ownerId'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as WorkersIndexRouteImport } from './routes/workers.index'
@@ -68,6 +69,11 @@ const AdminModerationRoute = AdminModerationRouteImport.update({
   path: '/moderation',
   getParentRoute: () => AdminRoute,
 } as any)
+const EnterpriseOwnerIdRoute = EnterpriseOwnerIdRouteImport.update({
+  id: '/enterprise/$ownerId',
+  path: '/enterprise/$ownerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
+  '/enterprise/$ownerId': typeof EnterpriseOwnerIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
+  '/enterprise/$ownerId': typeof EnterpriseOwnerIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin': typeof AdminIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
   '/admin/moderation': typeof AdminModerationRoute
+  '/enterprise/$ownerId': typeof EnterpriseOwnerIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/workers/$workerId': typeof WorkersWorkerIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
+    | '/enterprise/$ownerId'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin/'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
+    | '/enterprise/$ownerId'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/admin/affiliates'
     | '/admin/finance'
     | '/admin/moderation'
+    | '/enterprise/$ownerId'
     | '/jobs/$jobId'
     | '/workers/$workerId'
     | '/admin/'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   InboxRoute: typeof InboxRoute
   PostJobRoute: typeof PostJobRoute
+  EnterpriseOwnerIdRoute: typeof EnterpriseOwnerIdRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
   WorkersWorkerIdRoute: typeof WorkersWorkerIdRoute
   JobsIndexRoute: typeof JobsIndexRoute
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminModerationRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/enterprise/$ownerId': {
+      id: '/enterprise/$ownerId'
+      path: '/enterprise/$ownerId'
+      fullPath: '/enterprise/$ownerId'
+      preLoaderRoute: typeof EnterpriseOwnerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/': {
       id: '/jobs/'
       path: '/jobs'
@@ -311,6 +331,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   InboxRoute: InboxRoute,
   PostJobRoute: PostJobRoute,
+  EnterpriseOwnerIdRoute: EnterpriseOwnerIdRoute,
   JobsJobIdRoute: JobsJobIdRoute,
   WorkersWorkerIdRoute: WorkersWorkerIdRoute,
   JobsIndexRoute: JobsIndexRoute,
