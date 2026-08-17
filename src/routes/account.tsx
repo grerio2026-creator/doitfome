@@ -226,6 +226,7 @@ function AccountPage() {
           <TabsTrigger value="profile">Profil</TabsTrigger>
           <TabsTrigger value="portfolio">Portofolio</TabsTrigger>
           <TabsTrigger value="wallet">Dompet</TabsTrigger>
+          <TabsTrigger value="enterprise">Institusi</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -368,6 +369,108 @@ function AccountPage() {
                 <p className="py-2 text-sm text-muted-foreground">Belum ada penarikan.</p>
               )}
             </div>
+          </Card>
+        </TabsContent>
+        <TabsContent value="enterprise">
+          <Card className="space-y-4 p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={ent?.badge_status === "verified" ? "default" : "secondary"}>
+                Badge: {ent?.badge_status ?? "belum diajukan"}
+              </Badge>
+              {ent?.badge_status === "verified" && (
+                <Button asChild size="sm" variant="outline">
+                  <a href={`/enterprise/${user.id}`}>Lihat halaman publik</a>
+                </Button>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Ajukan verifikasi sebagai Pemda, BUMN, program CSR, atau perusahaan. Tim afiliasi
+              meninjau dokumen legal Anda sebelum badge resmi aktif.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="legal_name">Nama legal institusi</Label>
+                <Input
+                  id="legal_name"
+                  value={entForm.legal_name}
+                  onChange={(e) => setEntForm({ ...entForm, legal_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="badge_kind">Jenis (enterprise/pemda/bumn/csr)</Label>
+                <Input
+                  id="badge_kind"
+                  value={entForm.badge_kind}
+                  onChange={(e) => setEntForm({ ...entForm, badge_kind: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pic_name">Nama PIC</Label>
+                <Input
+                  id="pic_name"
+                  value={entForm.pic_name}
+                  onChange={(e) => setEntForm({ ...entForm, pic_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pic_contact">Kontak PIC</Label>
+                <Input
+                  id="pic_contact"
+                  value={entForm.pic_contact}
+                  onChange={(e) => setEntForm({ ...entForm, pic_contact: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website">Situs web</Label>
+                <Input
+                  id="website"
+                  value={entForm.website}
+                  onChange={(e) => setEntForm({ ...entForm, website: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="logo_url">URL logo</Label>
+                <Input
+                  id="logo_url"
+                  value={entForm.logo_url}
+                  onChange={(e) => setEntForm({ ...entForm, logo_url: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="hq_address">Alamat kantor</Label>
+                <Input
+                  id="hq_address"
+                  value={entForm.hq_address}
+                  onChange={(e) => setEntForm({ ...entForm, hq_address: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="legal_doc_url">Dokumen legal (NIB/surat resmi)</Label>
+                <Input
+                  id="legal_doc_url"
+                  value={entForm.legal_doc_url}
+                  onChange={(e) => setEntForm({ ...entForm, legal_doc_url: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mission">Misi / program</Label>
+              <Textarea
+                id="mission"
+                rows={3}
+                value={entForm.mission}
+                onChange={(e) => setEntForm({ ...entForm, mission: e.target.value })}
+              />
+            </div>
+            <Button onClick={() => void saveEnterprise()}>
+              {ent ? "Simpan profil institusi" : "Ajukan verifikasi badge"}
+            </Button>
+            {ent ? (
+              <p className="text-xs text-muted-foreground">
+                Dampak: {ent.workers_absorbed} pekerja terserap • {ent.total_projects} proyek •{" "}
+                {rupiah(Number(ent.total_budget))} anggaran
+              </p>
+            ) : null}
           </Card>
         </TabsContent>
       </Tabs>
