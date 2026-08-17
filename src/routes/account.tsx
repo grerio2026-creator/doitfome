@@ -71,6 +71,75 @@ function AccountPage() {
   const [portfolio, setPortfolio] = useState({ title: "", kind: "photo", media_url: "" });
   const [withdraw, setWithdraw] = useState({ amount: 250000, method: "bank", account_ref: "" });
 
+  const enterpriseQ = useQuery({
+    queryKey: ["enterprise-profile", user?.id],
+    enabled: Boolean(user),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("enterprise_profiles")
+        .select("*")
+        .eq("owner_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const ent = enterpriseQ.data;
+  const [entForm, setEntForm] = useState({
+    legal_name: "",
+    badge_kind: "enterprise",
+    mission: "",
+    website: "",
+    hq_address: "",
+    pic_name: "",
+    pic_contact: "",
+    logo_url: "",
+    legal_doc_url: "",
+  });
+  const [entLoaded, setEntLoaded] = useState(false);
+  if (ent && !entLoaded) {
+    setEntLoaded(true);
+    setEntForm({
+      legal_name: ent.legal_name ?? "",
+      badge_kind: ent.badge_kind ?? "enterprise",
+      mission: ent.mission ?? "",
+      website: ent.website ?? "",
+      hq_address: ent.hq_address ?? "",
+      pic_name: ent.pic_name ?? "",
+      pic_contact: ent.pic_contact ?? "",
+      logo_url: ent.logo_url ?? "",
+      legal_doc_url: ent.legal_doc_url ?? "",
+    });
+  }
+
+  async function saveEnterprise() {
+    if (!entForm.legal_name.trim()) {
+      toast.error("Nama legal wajib diisi");
+      return;
+    }
+    const payload = {
+      legal_name: entForm.legal_name.trim(),
+      badge_kind: entForm.badge_kind,
+      mission: entForm.mission.trim() || null,
+      website: entForm.website.trim() || null,
+      hq_address: entForm.hq_address.trim() || null,
+      pic_name: entForm.pic_name.trim() || null,
+      pic_contact: entForm.pic_contact.trim() || null,
+      logo_url: entForm.logo_url.trim() || null,
+      legal_doc_url: entForm.legal_doc_url.trim() || null,
+    };
+    const { error } = ent
+      ? await supabase.from("enterprise_profiles").update(payload).eq("id", ent.id)
+      : await supabase
+          .from("enterprise_profiles")
+          .insert({ ...payload, owner_id: user!.id, badge_status: "pending" });
+    if (error) toast.error("Gagal menyimpan", { description: error.message });
+    else {
+      toast.success(ent ? "Profil institusi diperbarui" : "Pengajuan badge dikirim ke tim afiliasi");
+      void queryClient.invalidateQueries({ queryKey: ["enterprise-profile", user!.id] });
+    }
+  }
+
   if (!user) {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
