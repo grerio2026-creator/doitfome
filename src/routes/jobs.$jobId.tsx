@@ -13,6 +13,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { OfficialBadge, StarRating, VerifiedBadge } from "@/components/Badges";
+import { ReportButton } from "@/components/ReportButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -425,7 +426,10 @@ function JobDetail() {
           ) : (
             discussion.map((c) => (
               <div key={c.id} className="rounded-lg border border-border p-3">
-                <p className="text-sm font-semibold">{c.author?.full_name ?? "Pengguna"}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm font-semibold">{c.author?.full_name ?? "Pengguna"}</p>
+                  <ReportButton targetType="comment" targetId={c.id} preview={c.body} />
+                </div>
                 <p className="text-sm text-muted-foreground">{c.body}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{timeAgo(c.created_at)}</p>
               </div>

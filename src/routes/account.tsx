@@ -71,6 +71,75 @@ function AccountPage() {
   const [portfolio, setPortfolio] = useState({ title: "", kind: "photo", media_url: "" });
   const [withdraw, setWithdraw] = useState({ amount: 250000, method: "bank", account_ref: "" });
 
+  const enterpriseQ = useQuery({
+    queryKey: ["enterprise-profile", user?.id],
+    enabled: Boolean(user),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("enterprise_profiles")
+        .select("*")
+        .eq("owner_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const ent = enterpriseQ.data;
+  const [entForm, setEntForm] = useState({
+    legal_name: "",
+    badge_kind: "enterprise",
+    mission: "",
+    website: "",
+    hq_address: "",
+    pic_name: "",
+    pic_contact: "",
+    logo_url: "",
+    legal_doc_url: "",
+  });
+  const [entLoaded, setEntLoaded] = useState(false);
+  if (ent && !entLoaded) {
+    setEntLoaded(true);
+    setEntForm({
+      legal_name: ent.legal_name ?? "",
+      badge_kind: ent.badge_kind ?? "enterprise",
+      mission: ent.mission ?? "",
+      website: ent.website ?? "",
+      hq_address: ent.hq_address ?? "",
+      pic_name: ent.pic_name ?? "",
+      pic_contact: ent.pic_contact ?? "",
+      logo_url: ent.logo_url ?? "",
+      legal_doc_url: ent.legal_doc_url ?? "",
+    });
+  }
+
+  async function saveEnterprise() {
+    if (!entForm.legal_name.trim()) {
+      toast.error("Nama legal wajib diisi");
+      return;
+    }
+    const payload = {
+      legal_name: entForm.legal_name.trim(),
+      badge_kind: entForm.badge_kind,
+      mission: entForm.mission.trim() || null,
+      website: entForm.website.trim() || null,
+      hq_address: entForm.hq_address.trim() || null,
+      pic_name: entForm.pic_name.trim() || null,
+      pic_contact: entForm.pic_contact.trim() || null,
+      logo_url: entForm.logo_url.trim() || null,
+      legal_doc_url: entForm.legal_doc_url.trim() || null,
+    };
+    const { error } = ent
+      ? await supabase.from("enterprise_profiles").update(payload).eq("id", ent.id)
+      : await supabase
+          .from("enterprise_profiles")
+          .insert({ ...payload, owner_id: user!.id, badge_status: "pending" });
+    if (error) toast.error("Gagal menyimpan", { description: error.message });
+    else {
+      toast.success(ent ? "Profil institusi diperbarui" : "Pengajuan badge dikirim ke tim afiliasi");
+      void queryClient.invalidateQueries({ queryKey: ["enterprise-profile", user!.id] });
+    }
+  }
+
   if (!user) {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
@@ -157,6 +226,7 @@ function AccountPage() {
           <TabsTrigger value="profile">Profil</TabsTrigger>
           <TabsTrigger value="portfolio">Portofolio</TabsTrigger>
           <TabsTrigger value="wallet">Dompet</TabsTrigger>
+          <TabsTrigger value="enterprise">Institusi</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -299,6 +369,108 @@ function AccountPage() {
                 <p className="py-2 text-sm text-muted-foreground">Belum ada penarikan.</p>
               )}
             </div>
+          </Card>
+        </TabsContent>
+        <TabsContent value="enterprise">
+          <Card className="space-y-4 p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={ent?.badge_status === "verified" ? "default" : "secondary"}>
+                Badge: {ent?.badge_status ?? "belum diajukan"}
+              </Badge>
+              {ent?.badge_status === "verified" && (
+                <Button asChild size="sm" variant="outline">
+                  <a href={`/enterprise/${user.id}`}>Lihat halaman publik</a>
+                </Button>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Ajukan verifikasi sebagai Pemda, BUMN, program CSR, atau perusahaan. Tim afiliasi
+              meninjau dokumen legal Anda sebelum badge resmi aktif.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="legal_name">Nama legal institusi</Label>
+                <Input
+                  id="legal_name"
+                  value={entForm.legal_name}
+                  onChange={(e) => setEntForm({ ...entForm, legal_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="badge_kind">Jenis (enterprise/pemda/bumn/csr)</Label>
+                <Input
+                  id="badge_kind"
+                  value={entForm.badge_kind}
+                  onChange={(e) => setEntForm({ ...entForm, badge_kind: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pic_name">Nama PIC</Label>
+                <Input
+                  id="pic_name"
+                  value={entForm.pic_name}
+                  onChange={(e) => setEntForm({ ...entForm, pic_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pic_contact">Kontak PIC</Label>
+                <Input
+                  id="pic_contact"
+                  value={entForm.pic_contact}
+                  onChange={(e) => setEntForm({ ...entForm, pic_contact: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website">Situs web</Label>
+                <Input
+                  id="website"
+                  value={entForm.website}
+                  onChange={(e) => setEntForm({ ...entForm, website: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="logo_url">URL logo</Label>
+                <Input
+                  id="logo_url"
+                  value={entForm.logo_url}
+                  onChange={(e) => setEntForm({ ...entForm, logo_url: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="hq_address">Alamat kantor</Label>
+                <Input
+                  id="hq_address"
+                  value={entForm.hq_address}
+                  onChange={(e) => setEntForm({ ...entForm, hq_address: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="legal_doc_url">Dokumen legal (NIB/surat resmi)</Label>
+                <Input
+                  id="legal_doc_url"
+                  value={entForm.legal_doc_url}
+                  onChange={(e) => setEntForm({ ...entForm, legal_doc_url: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mission">Misi / program</Label>
+              <Textarea
+                id="mission"
+                rows={3}
+                value={entForm.mission}
+                onChange={(e) => setEntForm({ ...entForm, mission: e.target.value })}
+              />
+            </div>
+            <Button onClick={() => void saveEnterprise()}>
+              {ent ? "Simpan profil institusi" : "Ajukan verifikasi badge"}
+            </Button>
+            {ent ? (
+              <p className="text-xs text-muted-foreground">
+                Dampak: {ent.workers_absorbed} pekerja terserap • {ent.total_projects} proyek •{" "}
+                {rupiah(Number(ent.total_budget))} anggaran
+              </p>
+            ) : null}
           </Card>
         </TabsContent>
       </Tabs>

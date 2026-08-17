@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { StarRating, VerifiedBadge } from "@/components/Badges";
+import { ReportButton } from "@/components/ReportButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -293,7 +294,10 @@ function WorkerProfile() {
                   <StarRating value={r.rating} />
                 </div>
                 <p className="text-sm text-muted-foreground">{r.comment ?? "-"}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{timeAgo(r.created_at)}</p>
+                <div className="mt-1 flex items-center justify-between gap-2">
+                  <p className="text-xs text-muted-foreground">{timeAgo(r.created_at)}</p>
+                  <ReportButton targetType="review" targetId={r.id} preview={r.comment} />
+                </div>
               </div>
             ))
           )}
