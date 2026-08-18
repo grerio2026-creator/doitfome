@@ -152,4 +152,83 @@ export async function fetchSkills() {
   return (data ?? []) as Skill[];
 }
 
+export type JobWithSkill = Job & { skill: Pick<Skill, "id" | "name"> | null };
+
+export async function fetchJobsByClient(clientId: string) {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*, skill:skills(id, name)")
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as JobWithSkill[];
+}
+
+export async function fetchJobsByWorker(workerId: string) {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*, skill:skills(id, name)")
+    .eq("locked_worker_id", workerId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as JobWithSkill[];
+}
+
+export async function fetchMyBids(userId: string) {
+  const { data, error } = await supabase
+    .from("comments")
+    .select("*, job:jobs(*)")
+    .eq("user_id", userId)
+    .not("bid_amount", "is", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as (Comment & { job: Job | null })[];
+}
+
+export async function fetchEscrowsByJobIds(jobIds: string[]) {
+  if (jobIds.length === 0) return {} as Record<string, Escrow>;
+  const { data, error } = await supabase
+    .from("transactions_escrow")
+    .select("*")
+    .in("job_id", jobIds);
+  if (error) throw error;
+  const map: Record<string, Escrow> = {};
+  for (const row of (data ?? []) as Escrow[]) map[row.job_id] = row;
+  return map;
+}
+
+export async function fetchBidCounts(jobIds: string[]) {
+  if (jobIds.length === 0) return {} as Record<string, number>;
+  const { data, error } = await supabase
+    .from("comments")
+    .select("job_id, bid_amount")
+    .in("job_id", jobIds)
+    .not("bid_amount", "is", null);
+  if (error) throw error;
+  const map: Record<string, number> = {};
+  for (const row of (data ?? []) as { job_id: string }[]) {
+    map[row.job_id] = (map[row.job_id] ?? 0) + 1;
+  }
+  return map;
+}
+
+export async function fetchReviewsByJobIds(jobIds: string[]) {
+  if (jobIds.length === 0) return {} as Record<string, Review>;
+  const { data, error } = await supabase.from("reviews").select("*").in("job_id", jobIds);
+  if (error) throw error;
+  const map: Record<string, Review> = {};
+  for (const row of (data ?? []) as Review[]) if (row.job_id) map[row.job_id] = row;
+  return map;
+}
+
+export async function fetchActiveWorkCount(workerId: string) {
+  const { count, error } = await supabase
+    .from("jobs")
+    .select("id", { count: "exact", head: true })
+    .eq("locked_worker_id", workerId)
+    .in("status", ["IN_PROGRESS", "SUBMITTED"]);
+  if (error) throw error;
+  return count ?? 0;
+}
+
 export { JOB_SELECT };

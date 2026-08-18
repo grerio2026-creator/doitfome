@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BadgeCheck, Loader2, Plus, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -229,7 +229,18 @@ function AccountPage() {
           <TabsTrigger value="enterprise">Institusi</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile">
+        <TabsContent value="profile" className="space-y-4">
+          <Card className="flex-row flex-wrap items-center justify-between gap-3 p-5">
+            <div>
+              <p className="font-semibold">Pekerjaan Saya</p>
+              <p className="text-sm text-muted-foreground">
+                {activeWorkQ.data ?? 0} pekerjaan aktif sedang Anda kerjakan
+              </p>
+            </div>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/my-jobs">Buka Pekerjaan Saya</Link>
+            </Button>
+          </Card>
           <Card className="space-y-4 p-5">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant={profile?.ktp_verified ? "default" : "secondary"}>

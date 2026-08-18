@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as MyJobsRouteImport } from './routes/my-jobs'
 import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAffiliatesRouteImport } from './routes/admin.affiliates'
@@ -42,6 +43,11 @@ const AdminRoute = AdminRouteImport.update({
 const InboxRoute = InboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyJobsRoute = MyJobsRouteImport.update({
+  id: '/my-jobs',
+  path: '/my-jobs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostJobRoute = PostJobRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
+  '/my-jobs': typeof MyJobsRoute
   '/post-job': typeof PostJobRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/inbox': typeof InboxRoute
+  '/my-jobs': typeof MyJobsRoute
   '/post-job': typeof PostJobRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/inbox': typeof InboxRoute
+  '/my-jobs': typeof MyJobsRoute
   '/post-job': typeof PostJobRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/inbox'
+    | '/my-jobs'
     | '/post-job'
     | '/admin/affiliates'
     | '/admin/finance'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/inbox'
+    | '/my-jobs'
     | '/post-job'
     | '/admin/affiliates'
     | '/admin/finance'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/inbox'
+    | '/my-jobs'
     | '/post-job'
     | '/admin/affiliates'
     | '/admin/finance'
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
   InboxRoute: typeof InboxRoute
+  MyJobsRoute: typeof MyJobsRoute
   PostJobRoute: typeof PostJobRoute
   EnterpriseOwnerIdRoute: typeof EnterpriseOwnerIdRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/inbox'
       fullPath: '/inbox'
       preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-jobs': {
+      id: '/my-jobs'
+      path: '/my-jobs'
+      fullPath: '/my-jobs'
+      preLoaderRoute: typeof MyJobsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post-job': {
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
   InboxRoute: InboxRoute,
+  MyJobsRoute: MyJobsRoute,
   PostJobRoute: PostJobRoute,
   EnterpriseOwnerIdRoute: EnterpriseOwnerIdRoute,
   JobsJobIdRoute: JobsJobIdRoute,

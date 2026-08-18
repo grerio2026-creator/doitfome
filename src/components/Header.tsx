@@ -102,6 +102,12 @@ export function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to="/my-jobs">
+                    <Briefcase className="size-4" />
+                    Pekerjaan Saya
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/account">Profil & Verifikasi</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
