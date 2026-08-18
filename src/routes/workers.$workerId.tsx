@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Award, MapPin, MessageSquare, Send, ShieldAlert, Video } from "lucide-react";
+import { Award, BadgeCheck, MapPin, MessageSquare, Send, ShieldAlert, Video } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -220,6 +220,12 @@ function WorkerProfile() {
             <Badge variant="secondary">
               {worker.jobs_completed} {t("jobs_done")}
             </Badge>
+            {(activeWorkQ.data ?? 0) > 0 ? (
+              <Badge className="gap-1 bg-action text-action-foreground hover:bg-action">
+                <BadgeCheck className="size-3.5" />
+                Sedang menerima pekerjaan
+              </Badge>
+            ) : null}
           </div>
           {worker.bio ? <p className="text-sm text-muted-foreground">{worker.bio}</p> : null}
           <div className="flex flex-wrap gap-1.5">
