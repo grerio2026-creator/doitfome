@@ -26,7 +26,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { containsSensitive, maskSensitive, timeAgo } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import { fetchPortfolios, fetchReviews, fetchWorker } from "@/lib/queries";
+import {
+  fetchActiveWorkCount,
+  fetchPortfolios,
+  fetchReviews,
+  fetchWorker,
+} from "@/lib/queries";
 
 export const Route = createFileRoute("/workers/$workerId")({
   head: () => ({
@@ -91,6 +96,10 @@ function WorkerProfile() {
   const portfolioQ = useQuery({
     queryKey: ["portfolios", workerId],
     queryFn: () => fetchPortfolios(workerId),
+  });
+  const activeWorkQ = useQuery({
+    queryKey: ["active-work", workerId],
+    queryFn: () => fetchActiveWorkCount(workerId),
   });
 
   const startChat = useMutation({
