@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { rupiah, timeAgo } from "@/lib/format";
-import { fetchPortfolios, type Withdrawal } from "@/lib/queries";
+import { fetchActiveWorkCount, fetchPortfolios, type Withdrawal } from "@/lib/queries";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
@@ -66,6 +66,12 @@ function AccountPage() {
       if (error) throw error;
       return (data ?? []) as Withdrawal[];
     },
+  });
+
+  const activeWorkQ = useQuery({
+    queryKey: ["active-work", user?.id],
+    queryFn: () => fetchActiveWorkCount(user!.id),
+    enabled: Boolean(user),
   });
 
   const [portfolio, setPortfolio] = useState({ title: "", kind: "photo", media_url: "" });
