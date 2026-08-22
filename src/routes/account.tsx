@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { rupiah, timeAgo } from "@/lib/format";
-import { fetchPortfolios, type Withdrawal } from "@/lib/queries";
+import { fetchActiveWorkCount, fetchPortfolios, type Withdrawal } from "@/lib/queries";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
