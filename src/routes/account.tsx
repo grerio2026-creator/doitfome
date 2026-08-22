@@ -68,6 +68,12 @@ function AccountPage() {
     },
   });
 
+  const activeWorkQ = useQuery({
+    queryKey: ["active-work", user?.id],
+    queryFn: () => fetchActiveWorkCount(user!.id),
+    enabled: Boolean(user),
+  });
+
   const [portfolio, setPortfolio] = useState({ title: "", kind: "photo", media_url: "" });
   const [withdraw, setWithdraw] = useState({ amount: 250000, method: "bank", account_ref: "" });
 
