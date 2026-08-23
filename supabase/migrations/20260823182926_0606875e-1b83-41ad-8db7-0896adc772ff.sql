@@ -1,0 +1,3 @@
+CREATE POLICY "portfolio media public read" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'portfolio-media');
+CREATE POLICY "portfolio media owner upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'portfolio-media' AND (storage.foldername(name))[1] = auth.uid()::text);
+CREATE POLICY "portfolio media owner delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'portfolio-media' AND (storage.foldername(name))[1] = auth.uid()::text);
