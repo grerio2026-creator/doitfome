@@ -231,4 +231,69 @@ export async function fetchActiveWorkCount(workerId: string) {
   return count ?? 0;
 }
 
+export type PlatformStats = {
+  verifiedWorkers: number;
+  activeJobs: number;
+  institutions: number;
+  satisfaction: number;
+  completedJobs: number;
+};
+
+export async function fetchPlatformStats(): Promise<PlatformStats> {
+  const [workers, activeJobs, institutions, reviews, done] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("kind", "worker")
+      .eq("ktp_verified", true),
+    supabase.from("jobs").select("id", { count: "exact", head: true }).eq("status", "OPEN"),
+    supabase.from("enterprise_profiles").select("id", { count: "exact", head: true }),
+    supabase.from("reviews").select("rating"),
+    supabase.from("jobs").select("id", { count: "exact", head: true }).eq("status", "COMPLETED"),
+  ]);
+  const ratings = ((reviews.data ?? []) as { rating: number }[]).map((r) => r.rating);
+  const satisfaction = ratings.length
+    ? Math.round((ratings.filter((r) => r >= 4).length / ratings.length) * 100)
+    : 98;
+  return {
+    verifiedWorkers: workers.count ?? 0,
+    activeJobs: activeJobs.count ?? 0,
+    institutions: institutions.count ?? 0,
+    satisfaction,
+    completedJobs: done.count ?? 0,
+  };
+}
+
+export async function fetchJobCountsBySkill() {
+  const { data, error } = await supabase.from("jobs").select("skill_id").eq("status", "OPEN");
+  if (error) throw error;
+  const map: Record<string, number> = {};
+  for (const row of (data ?? []) as { skill_id: string | null }[]) {
+    if (!row.skill_id) continue;
+    map[row.skill_id] = (map[row.skill_id] ?? 0) + 1;
+  }
+  return map;
+}
+
+/** Portfolio media may be a storage path (private bucket) or an absolute URL. */
+export async function resolveMediaUrl(value: string | null) {
+  if (!value) return null;
+  if (/^https?:\/\//.test(value) || value.startsWith("data:")) return value;
+  const { data } = await supabase.storage
+    .from("portfolio-media")
+    .createSignedUrl(value, 60 * 60);
+  return data?.signedUrl ?? null;
+}
+
+export async function uploadPortfolioMedia(userId: string, file: File) {
+  const ext = file.name.split(".").pop() ?? "bin";
+  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from("portfolio-media").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) throw error;
+  return path;
+}
+
 export { JOB_SELECT };
