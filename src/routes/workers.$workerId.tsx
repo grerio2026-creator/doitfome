@@ -54,26 +54,46 @@ export const Route = createFileRoute("/workers/$workerId")({
 
 function ProtectedMedia({ url, kind }: { url: string | null; kind: string }) {
   const { t } = useI18n();
+  const resolved = useQuery({
+    queryKey: ["media-url", url],
+    enabled: !!url,
+    queryFn: () => resolveMediaUrl(url),
+    staleTime: 30 * 60 * 1000,
+  });
+  const src = resolved.data ?? null;
+
   return (
     <div
       className="protected-media relative overflow-hidden rounded-xl border border-border bg-muted"
       onContextMenu={(e) => e.preventDefault()}
     >
       {kind === "video" ? (
-        <div className="grid aspect-video place-items-center bg-foreground/5">
-          <Video className="size-8 text-muted-foreground" />
-        </div>
+        src ? (
+          <video
+            src={src}
+            controls
+            controlsList="nodownload"
+            preload="metadata"
+            className="aspect-video w-full bg-foreground/5 object-cover"
+          />
+        ) : (
+          <div className="grid aspect-video place-items-center bg-foreground/5">
+            <Video className="size-8 text-muted-foreground" />
+          </div>
+        )
       ) : (
         <img
-          src={url ?? ""}
+          src={src ?? ""}
           alt=""
           draggable={false}
           className="pointer-events-none aspect-square w-full select-none object-cover"
         />
       )}
-      <span className="pointer-events-none absolute inset-0 grid place-items-center text-xs font-bold tracking-widest text-white/70 mix-blend-overlay">
-        {t("watermark")}
-      </span>
+      {kind === "video" ? null : (
+        <span className="pointer-events-none absolute inset-0 grid place-items-center text-xs font-bold tracking-widest text-white/70 mix-blend-overlay">
+          {t("watermark")}
+        </span>
+      )}
     </div>
   );
 }

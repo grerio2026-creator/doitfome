@@ -16,10 +16,16 @@ import { fetchJobs, type JobWithRefs } from "@/lib/queries";
 type Tab = "skill" | "near" | "new" | "remote" | "gov";
 
 export const Route = createFileRoute("/jobs/")({
-  validateSearch: (search: Record<string, unknown>): { tab?: Tab } => {
-    const tab = search['tab'];
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { tab?: Tab; q?: string; skill?: string } => {
+    const tab = search["tab"];
     const allowed: Tab[] = ["skill", "near", "new", "remote", "gov"];
-    return typeof tab === "string" && allowed.includes(tab as Tab) ? { tab: tab as Tab } : {};
+    const out: { tab?: Tab; q?: string; skill?: string } = {};
+    if (typeof tab === "string" && allowed.includes(tab as Tab)) out.tab = tab as Tab;
+    if (typeof search["q"] === "string" && search["q"]) out.q = search["q"];
+    if (typeof search["skill"] === "string" && search["skill"]) out.skill = search["skill"];
+    return out;
   },
   head: () => ({
     meta: [
@@ -44,7 +50,7 @@ function JobFeed() {
   const { profile } = useAuth();
   const search = Route.useSearch();
   const [tab, setTab] = useState<Tab>(search.tab ?? "new");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(search.q ?? "");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     profile?.lat != null && profile?.lng != null
       ? { lat: profile.lat, lng: profile.lng }
@@ -81,6 +87,7 @@ function JobFeed() {
 
   const filtered = useMemo(() => {
     let list = withDistance;
+    if (search.skill) list = list.filter((x) => x.job.skill_id === search.skill);
     if (q.trim()) {
       const needle = q.toLowerCase();
       list = list.filter(
@@ -107,7 +114,7 @@ function JobFeed() {
       });
     }
     return list;
-  }, [withDistance, tab, q, profile?.headline]);
+  }, [withDistance, tab, q, search.skill, profile?.headline]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { I18nProvider } from "@/lib/i18n";
 import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/Sidebar";
 
 function NotFoundComponent() {
   return (
@@ -128,7 +129,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthProvider>
-          <div className="flex min-h-screen flex-col">
+          <Sidebar />
+          <div className="flex min-h-screen flex-col lg:ps-64">
             <Header />
             <main className="flex-1">
               {/* Required: nested routes render here. */}
