@@ -16,10 +16,16 @@ import { fetchJobs, type JobWithRefs } from "@/lib/queries";
 type Tab = "skill" | "near" | "new" | "remote" | "gov";
 
 export const Route = createFileRoute("/jobs/")({
-  validateSearch: (search: Record<string, unknown>): { tab?: Tab } => {
-    const tab = search['tab'];
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { tab?: Tab; q?: string; skill?: string } => {
+    const tab = search["tab"];
     const allowed: Tab[] = ["skill", "near", "new", "remote", "gov"];
-    return typeof tab === "string" && allowed.includes(tab as Tab) ? { tab: tab as Tab } : {};
+    const out: { tab?: Tab; q?: string; skill?: string } = {};
+    if (typeof tab === "string" && allowed.includes(tab as Tab)) out.tab = tab as Tab;
+    if (typeof search["q"] === "string" && search["q"]) out.q = search["q"];
+    if (typeof search["skill"] === "string" && search["skill"]) out.skill = search["skill"];
+    return out;
   },
   head: () => ({
     meta: [
