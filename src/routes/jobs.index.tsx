@@ -50,7 +50,7 @@ function JobFeed() {
   const { profile } = useAuth();
   const search = Route.useSearch();
   const [tab, setTab] = useState<Tab>(search.tab ?? "new");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(search.q ?? "");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     profile?.lat != null && profile?.lng != null
       ? { lat: profile.lat, lng: profile.lng }
@@ -87,6 +87,7 @@ function JobFeed() {
 
   const filtered = useMemo(() => {
     let list = withDistance;
+    if (search.skill) list = list.filter((x) => x.job.skill_id === search.skill);
     if (q.trim()) {
       const needle = q.toLowerCase();
       list = list.filter(
